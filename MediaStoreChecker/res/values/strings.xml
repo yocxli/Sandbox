@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MediaStoreChecker</string>
+    
+    <string name="action_path_input">パス入力</string>
+    <string name="action_settings">設定</string>
+    <string name="action_info">ファイル実体詳細</string>
+    <string name="action_delete">削除</string>
+    <string name="action_create_file">作成（ファイル）</string>
+    <string name="action_create_directory">作成（フォルダー）</string>
+    <string name="action_scan_file">スキャン</string>
+    <string name="action_scan_file_intent">スキャン(Intent)</string>
+    <string name="action_scan_full">スキャン（フル）</string>
+    <string name="action_delete_record_media">レコード削除（メディア）</string>
+    <string name="action_delete_record_file">レコード削除（ファイル）</string>
+    
+    <string name="label_info">詳細</string>
+    <string name="label_image">画像</string>
+    <string name="label_audio">音楽</string>
+    <string name="label_video">動画</string>
+    <string name="label_file">ファイル</string>
+    
+    <string name="notification_scan_started">スキャン開始</string>
+    <string name="notification_scan_completed">スキャン完了</string>
+    
+    <string name="dialog_path_input_hint">ファイルパスを入力</string>
+    <string name="dialog_path_input_ok">OK</string>
+    
+    <string name="message_no_data">データがありません。</string>
+    <string name="message_empty_path">データが不正です。</string>
+    <string name="message_failure_create_file">ファイルの作成に失敗しました。</string>
+    <string name="message_failure_create_directory">フォルダーの作成に失敗しました。</string>
+
+    
+</resources>
