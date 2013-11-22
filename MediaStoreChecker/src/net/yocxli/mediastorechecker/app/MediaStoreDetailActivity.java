@@ -144,11 +144,11 @@ public class MediaStoreDetailActivity extends ActionBarActivity {
                 update();
                 return true;
             case R.id.action_delete_record_media:
-                MediaStoreHelper.deleteFileFromMedia(this, path);
+                MediaStoreHelper.deleteFileFromMedia(getContentResolver(), path);
                 update();
                 return true;
             case R.id.action_delete_record_file:
-                MediaStoreHelper.deleteFile(this, path);
+                MediaStoreHelper.deleteFile(getContentResolver(), path);
                 update();
                 return true;
         }

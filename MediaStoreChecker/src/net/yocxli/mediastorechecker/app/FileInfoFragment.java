@@ -66,7 +66,7 @@ public class FileInfoFragment extends ListFragment {
             String path = mData.getPath();
             if ("contents".equals(mData.getScheme())) {
                 ContentResolver cr = getActivity().getContentResolver();
-                path = MediaStoreHelper.getFilePath(cr, mData);
+                path = MediaStoreHelper.getFilePathForUri(cr, mData);
             }
             File file = new File(path);
             list.add(createMap("path", file.getAbsolutePath()));

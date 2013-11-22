@@ -62,7 +62,7 @@ public class MediaStoreDetailFragment extends ListFragment {
             ContentResolver cr = getActivity().getContentResolver();
             String path = mData.getPath();
             if ("content".equals(mData.getScheme())) {
-                path = MediaStoreHelper.getFilePath(cr, mData);
+                path = MediaStoreHelper.getFilePathForUri(cr, mData);
             }
             Cursor c = cr.query(mUri, null, MediaStore.MediaColumns.DATA + " = ?",
                     new String[] { path }, null);

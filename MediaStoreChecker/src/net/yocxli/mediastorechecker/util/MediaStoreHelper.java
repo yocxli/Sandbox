@@ -14,6 +14,12 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
+/**
+ * MediaStore周りのヘルパークラス
+ * 
+ * @author yocxli
+ *
+ */
 public class MediaStoreHelper {
     private static final String TAG = "MediaStoreHelper";
     private static final boolean LOCAL_LOGV = false;
@@ -22,7 +28,7 @@ public class MediaStoreHelper {
      * メディアスキャン実行中かどうか。
      * 
      * @param cr
-     * @return
+     * @return スキャン中ならtrue、そうでなければfalse。
      */
     public static boolean isScanRunning(ContentResolver cr) {
         Cursor cursor = cr.query(MediaStore.getMediaScannerUri(),
@@ -34,8 +40,10 @@ public class MediaStoreHelper {
         cursor.moveToFirst();
         int index = cursor.getColumnIndex(MediaStore.MEDIA_SCANNER_VOLUME);
         String volume = cursor.getString(index);
-        Log.v(TAG, "isScanRunning: volume=" + volume);
         cursor.close();
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "isScanRunning: volume=" + volume);
+        }
         return volume != null;
     }
     
@@ -43,9 +51,9 @@ public class MediaStoreHelper {
      * MediaScannerConnection でファイルをスキャンする。
      * 
      * @param context
-     * @param path
-     * @param mimeType
-     * @param callback
+     * @param path     スキャンするファイルのパス。
+     * @param mimeType スキャンするファイルのMIMEタイプ。
+     * @param callback スキャン結果を通知するコールバック。不要であればnullを指定。
      */
     public static void scanFile(Context context, String path, String mimeType,
                                 MediaScannerConnection.OnScanCompletedListener callback) {
@@ -53,12 +61,12 @@ public class MediaStoreHelper {
     }
     
     /**
-     * MediaScannerConnection でファイルをスキャンする。
+     * MediaScannerConnection で複数のファイルをスキャンする。
      * 
      * @param context
-     * @param paths
-     * @param mimeTypes
-     * @param callback
+     * @param paths     スキャンするファイルのパスの配列。
+     * @param mimeTypes スキャンするファイルのMIMEタイプの配列。
+     * @param callback  スキャン結果を通知するコールバック。不要であればnullを指定。
      */
     public static void scanFile(Context context, String[] paths, String[] mimeTypes,
                                 MediaScannerConnection.OnScanCompletedListener callback) {
@@ -70,7 +78,7 @@ public class MediaStoreHelper {
      * Intent.ACTION_MEDIA_SCANNER_SCAN_FILE でファイルをスキャンする。
      * 
      * @param context
-     * @param path
+     * @param path スキャンするファイルのパス。
      */
     public static void scanFileByIntent(Context context, String path) {
         scanFileByIntent(context, new File(path));
@@ -80,7 +88,7 @@ public class MediaStoreHelper {
      * Intent.ACTION_MEDIA_SCANNER_SCAN_FILE でファイルをスキャンする。
      * 
      * @param context
-     * @param file
+     * @param file スキャンするファイル。
      */
     public static void scanFileByIntent(Context context, File file) {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -88,81 +96,132 @@ public class MediaStoreHelper {
         context.sendBroadcast(intent);
     }
     
-    public static void deleteFile(Context context, String path) {
-        deleteFile(context, new String[] { path });
+    /**
+     * MediaStore からファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param path 削除するファイルのパス。
+     */
+    public static void deleteFile(ContentResolver cr, String path) {
+        deleteFile(cr, new String[] { path });
     }
     
+    /**
+     * MediaStore から複数のファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param paths 削除するファイルのパスの配列。
+     */
     @SuppressLint("NewApi")
-    public static void deleteFile(Context context, String[] paths) {
+    public static void deleteFile(ContentResolver cr, String[] paths) {
         if (LOCAL_LOGV) {
-            Log.v(TAG, "deleteFile");
+            Log.v(TAG, "[deleteFile]");
         }
         
-        ContentResolver cr = context.getContentResolver();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            final String where = MediaStore.MediaColumns.DATA + " = ?";
+            final int num = paths.length;
+            for (int i = 0; i < num; i++) {
+                String[] args = new String[]{ paths[i] };
+                
+                int result = cr.delete(MediaStore.Files.getContentUri("external"), where, args);
+                if (LOCAL_LOGV) {
+                    Log.v(TAG, "[deleteFile] delete result: " + result);
+                }
+            }
+        } else {
+            deleteFileFromMedia(cr, paths);
+        }
+    }
+    
+    /**
+     * MediaStore からディレクトリのレコードとそのディレクトリに含まれるファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param directory 削除するディレクトリ。
+     */
+    public static void deleteDirectory(ContentResolver cr, String directory) {
+        deleteDirectory(cr, new String[] { directory });
+    }
+    
+    /**
+     * MediaStore から複数のディレクトリのレコードとそれぞれのディレクトリに含まれるファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param directories 削除するディレクトリの配列。
+     */
+    @SuppressLint("NewApi")
+    public static void deleteDirectory(ContentResolver cr, String[] directories) {
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "[deleteDirectory]");
+        }
+        
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            final String where = MediaStore.MediaColumns.DATA + " LIKE ?";
+            final int num = directories.length;
+            for (int i = 0; i < num; i++) {
+                String directory = directories[i];
+                if (!directory.endsWith(File.separator)) {
+                    directory += File.separator;
+                }
+                String[] args = new String[]{ directory + "%" };
+                
+                int result = cr.delete(MediaStore.Files.getContentUri("external"), where, args);
+                if (LOCAL_LOGV) {
+                    Log.v(TAG, "[deleteDirectory] delete result: " + result);
+                }
+            }
+        } else {
+            deleteDirectoryFromMedia(cr, directories);
+        }
+    }
+    
+    /**
+     * MediaStore のメディア系テーブルからファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param path 削除するファイルのパス。
+     */
+    public static void deleteFileFromMedia(ContentResolver cr, String path) {
+        deleteFileFromMedia(cr, new String[] { path });
+    }
+    
+    /**
+     * MediaStore のメディア系テーブルから複数のファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param paths 削除するファイルのパスの配列。
+     */
+    public static void deleteFileFromMedia(ContentResolver cr, String[] paths) {
         final String where = MediaStore.MediaColumns.DATA + " = ?";
         final int num = paths.length;
         for (int i = 0; i < num; i++) {
-            String[] args = new String[]{ paths[i] };
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-                int result = cr.delete(MediaStore.Files.getContentUri("external"), where, args);
-                if (LOCAL_LOGV) {
-                    Log.d(TAG, "delete result: " + result);
-                }
-            }
-        }
-    }
-    
-    public static void deleteDirectory(Context context, String directory) {
-        deleteDirectory(context, new String[] { directory });
-    }
-    
-    @SuppressLint("NewApi")
-    public static void deleteDirectory(Context context, String[] directories) {
-        if (LOCAL_LOGV) {
-            Log.v(TAG, "deleteDirectory");
-        }
-        
-        ContentResolver cr = context.getContentResolver();
-        final String where = MediaStore.MediaColumns.DATA + " LIKE ?";
-        final int num = directories.length;
-        for (int i = 0; i < num; i++) {
-            String directory = directories[i];
-            if (!directory.endsWith(File.separator)) {
-                directory += File.separator;
-            }
-            String[] args = new String[]{ directory + "%" };
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-                int result = cr.delete(MediaStore.Files.getContentUri("external"), where, args);
-                if (LOCAL_LOGV) {
-                    Log.d(TAG, "delete result: " + result);
-                }
-            }
-        }
-    }
-    
-    public static void deleteFileFromMedia(Context context, String path) {
-        deleteFileFromMedia(context, new String[] { path });
-    }
-    
-    public static void deleteFileFromMedia(Context context, String[] paths) {
-        ContentResolver cr = context.getContentResolver();
-        final String where = MediaStore.MediaColumns.DATA + " LIKE ?";
-        final int num = paths.length;
-        for (int i = 0; i < num; i++) {
             String[] args = new String[] { paths[i] };
-            int imageResult = cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, args);
-            int audioResult = cr.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, where, args);
-            int videoResult = cr.delete(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, where, args);
-            Log.d(TAG, "delete result: image=" + imageResult + ", audio=" + audioResult + ", video=" + videoResult);
+            final int imageResult = cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, args);
+            final int audioResult = cr.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, where, args);
+            final int videoResult = cr.delete(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, where, args);
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "[deleteFileFromMedia] delete result: image=" + imageResult + ", audio=" + audioResult + ", video=" + videoResult);
+            }
         }
     }
     
-    public static void deleteDirectoryFromMedia(Context context, String direcotry) {
-        deleteFileFromMedia(context, new String[] { direcotry });
+    /**
+     * MediaStore のメディア系テーブルから任意のディレクトリ以下のファイルのレコードを削除する。
+     * 
+     * @param cr
+     * @param direcotry 削除対象のディレクトリ。
+     */
+    public static void deleteDirectoryFromMedia(ContentResolver cr, String direcotry) {
+        deleteDirectoryFromMedia(cr, new String[] { direcotry });
     }
     
-    public static void deleteDirectoryFromMedia(Context context, String[] directories) {
-        ContentResolver cr = context.getContentResolver();
+    /**
+     * MediaStore のメディア系テーブルから任意の複数のディレクトリ以下のファイルのレコードを削除する。
+     * @param cr
+     * @param directories 削除対象のディレクトリの配列。
+     */
+    public static void deleteDirectoryFromMedia(ContentResolver cr, String[] directories) {
         final String where = MediaStore.MediaColumns.DATA + " LIKE ?";
         final int num = directories.length;
         for (int i = 0; i < num; i++) {
@@ -174,19 +233,52 @@ public class MediaStoreHelper {
             int imageResult = cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, args);
             int audioResult = cr.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, where, args);
             int videoResult = cr.delete(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, where, args);
-            Log.d(TAG, "delete result: image=" + imageResult + ", audio=" + audioResult + ", video=" + videoResult);
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "[deleteDirectoryFromMedia] delete result: image=" + imageResult + ", audio=" + audioResult + ", video=" + videoResult);
+            }
         }
     }
+    
+    /**
+     * 与えられた File の content URI を返す。
+     * @param cr
+     * @param file
+     * @return
+     */
+    public static Uri getUriForFile(ContentResolver cr, File file) {
+        Uri uri = null;
+        // TODO: 実装する
+        return uri;
+    }
 
-    public static String getFilePath(ContentResolver cr, Uri uri) {
+    /**
+     * 与えられた content URI のファイルパスを返す。
+     * @param cr
+     * @param uri
+     * @return
+     */
+    public static String getFilePathForUri(ContentResolver cr, Uri uri) {
         String path = null;
         Cursor c = cr.query(uri, null, null, null, null);
-        if (c != null && c.getCount() > 0) {
-            c.moveToFirst();
-            final int index = c.getColumnIndex(MediaStore.MediaColumns.DATA);
-            path = c.getString(index);
+        if (c != null) {
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                final int index = c.getColumnIndex(MediaStore.MediaColumns.DATA);
+                path = c.getString(index);
+            }
             c.close();
         }
         return path;
     }
-}
+    
+    /**
+     * 与えられた content URI の File を返す。
+     * @param cr
+     * @param uri
+     * @return
+     */
+    public static File getFileForUri(ContentResolver cr, Uri uri) {
+        String path = getFilePathForUri(cr, uri);
+        return path == null ? null : new File(path);
+    }
+ }
