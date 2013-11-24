@@ -43,7 +43,7 @@ public class TabsAdapter extends FragmentPagerAdapter
         
         mActionBar = activity.getSupportActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        mActionBar.setDisplayShowTitleEnabled(false);
+//        mActionBar.setDisplayShowTitleEnabled(false);
         
         mPager = pager;
         mPager.setAdapter(this);

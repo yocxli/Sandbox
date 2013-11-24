@@ -3,7 +3,11 @@
 
     <string name="app_name">MediaStoreChecker</string>
     
+    <string name="title_tables">テーブル一覧</string>
+    <string name="title_details">詳細</string>
+    
     <string name="action_path_input">パス入力</string>
+    <string name="action_check_provider_version">プロバイダーバージョン</string>
     <string name="action_settings">設定</string>
     <string name="action_info">ファイル実体詳細</string>
     <string name="action_delete">削除</string>
@@ -17,8 +21,17 @@
     
     <string name="label_info">詳細</string>
     <string name="label_image">画像</string>
+    <string name="label_image_thumbnail">画像サムネイル</string>
     <string name="label_audio">音楽</string>
+    <string name="label_audio_album">アルバム</string>
+    <string name="label_audio_artist">アーティスト</string>
+    <string name="label_audio_artist_album">アーティストアルバム</string>
+    <string name="label_audio_genre">ジャンル</string>
+    <string name="label_audio_genre_member">ジャンルメンバー</string>
+    <string name="label_audio_playlist">プレイリスト</string>
+    <string name="label_audio_playlist_members">プレイリストメンバー</string>
     <string name="label_video">動画</string>
+    <string name="label_video_thumbnail">動画サムネイル</string>
     <string name="label_file">ファイル</string>
     
     <string name="notification_scan_started">スキャン開始</string>

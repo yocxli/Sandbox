@@ -1,5 +1,6 @@
 package net.yocxli.mediastorechecker.app;
 
+import net.yocxli.mediastorechecker.R;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,13 +33,12 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
         Bundle args = getArguments();
         mUri = (Uri) args.getParcelable(TARGET_URI);
         
-        setEmptyText("no data");
+        setEmptyText(getResources().getString(R.string.message_no_data));
         
         setListShown(false);
         
         mAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_2,
-                null, new String[] { MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA },
-                new int[] {android.R.id.text1, android.R.id.text2}, 0);
+                null, getProjection(mUri), new int[] {android.R.id.text1, android.R.id.text2}, 0);
         
         setListAdapter(mAdapter);
         
@@ -59,11 +59,12 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
         if (LOCAL_LOGV) {
             Log.v(TAG, "onCreateLoader: id=" + id);
         }
-        
+        Uri.Builder builder = mUri.buildUpon();
+        builder.appendQueryParameter("limit", "100");
         return new CursorLoader(getActivity(),
-                mUri,
-                new String[] { MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA },
-                null, null, MediaStore.MediaColumns._ID + " DESC LIMIT 100");
+                builder.build(),
+                getProjection(mUri),
+                null, null, MediaStore.MediaColumns._ID + " DESC");
     }
 
     @Override
@@ -87,5 +88,18 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
         mAdapter.swapCursor(null);
     }
 
-    
+    private static String[] getProjection(Uri uri) {
+        String[] projection = new String[2];
+        projection[0] = MediaStore.MediaColumns._ID;
+        if (MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.equals(uri)) {
+            projection[1] = MediaStore.Audio.Albums.ALBUM;
+        } else if (MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI.equals(uri)) {
+            projection[1] = MediaStore.Audio.Artists.ARTIST;
+        } else if (MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.equals(uri)) {
+            projection[1] = MediaStore.Audio.Genres.NAME;
+        } else {
+            projection[1] = MediaStore.MediaColumns.DATA;
+        }
+        return projection;
+    }
 }

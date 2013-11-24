@@ -11,12 +11,17 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class MediaScanReceiver extends BroadcastReceiver {
+    private static final String TAG = "MediaScanReceiver";
+    private static final boolean LOCAL_LOGV = false;
     
     private static final int NOTIFICATION_ID = 4444;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v("debug", "onReceiver: " + intent.getAction());
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "[onReceiver] " + intent.getAction());
+        }
+        
         final String action = intent.getAction();
         final Uri data = intent.getData();
         
