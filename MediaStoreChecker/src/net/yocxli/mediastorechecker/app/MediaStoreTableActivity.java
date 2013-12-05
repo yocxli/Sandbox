@@ -104,9 +104,11 @@ public class MediaStoreTableActivity extends ActionBarActivity {
             audioGenreExternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI);
             mTabsAdapter.addTab(getString(R.string.volume_external), MediaStoreFragment.class, audioGenreExternalArgs);
             
+            /* no such table で落ちる（Xperia AX）
             Bundle audioGenreInternalArgs = new Bundle();
             audioGenreInternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Audio.Genres.INTERNAL_CONTENT_URI);
             mTabsAdapter.addTab(getString(R.string.volume_internal), MediaStoreFragment.class, audioGenreInternalArgs);
+            */
         } else if (mType == Const.MEDIA_TYPE_AUDIO_PLAYLIST) {
             // プレイリスト
             typeText = getString(R.string.label_audio_playlist);
@@ -115,9 +117,11 @@ public class MediaStoreTableActivity extends ActionBarActivity {
             audioPlaylistExternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI);
             mTabsAdapter.addTab(getString(R.string.volume_external), MediaStoreFragment.class, audioPlaylistExternalArgs);
             
+            /* no such table で落ちる (Xperia AX)
             Bundle audioPlaylistInternalArgs = new Bundle();
             audioPlaylistInternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Audio.Playlists.INTERNAL_CONTENT_URI);
             mTabsAdapter.addTab(getString(R.string.volume_internal), MediaStoreFragment.class, audioPlaylistInternalArgs);
+            */
         } else if (mType == Const.MEDIA_TYPE_VIDEO) {
             // 動画
             typeText = getString(R.string.label_video);
