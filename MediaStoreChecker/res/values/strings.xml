@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">MediaStoreChecker</string>
-    <string name="title_tables">テーブル一覧</string>
+    <string name="title_tables_format">%sテーブル</string>
     <string name="title_details">詳細</string>
     <string name="action_path_input">パス入力</string>
     <string name="action_check_provider_version">プロバイダーバージョン</string>
@@ -16,6 +16,8 @@
     <string name="action_scan_full">スキャン（フル）</string>
     <string name="action_delete_record_media">レコード削除（メディア）</string>
     <string name="action_delete_record_file">レコード削除（ファイル）</string>
+    
+    <string name="label_status">ステータス</string>
     <string name="label_info">詳細</string>
     <string name="label_image">画像</string>
     <string name="label_image_thumbnail">画像サムネイル</string>
@@ -39,6 +41,7 @@
     <string name="message_failure_create_file">ファイルの作成に失敗しました。</string>
     <string name="message_failure_create_directory">フォルダーの作成に失敗しました。</string>
     <string name="title_activity_media_store_status">MediaStoreStatusActivity</string>
-    <string name="hello_world">Hello world!</string>
-
+    
+    <string name="volume_external">external</string>
+    <string name="volume_internal">internal</string>
 </resources>

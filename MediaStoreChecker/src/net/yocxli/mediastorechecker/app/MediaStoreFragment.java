@@ -92,11 +92,11 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
     private static String[] getProjection(Uri uri) {
         String[] projection = new String[2];
         projection[0] = MediaStore.MediaColumns._ID;
-        if (MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.equals(uri)) {
+        if (MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.equals(uri) || MediaStore.Audio.Albums.INTERNAL_CONTENT_URI.equals(uri)) {
             projection[1] = MediaStore.Audio.Albums.ALBUM;
-        } else if (MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI.equals(uri)) {
+        } else if (MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI.equals(uri) || MediaStore.Audio.Artists.INTERNAL_CONTENT_URI.equals(uri)) {
             projection[1] = MediaStore.Audio.Artists.ARTIST;
-        } else if (MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.equals(uri)) {
+        } else if (MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.equals(uri) || MediaStore.Audio.Genres.INTERNAL_CONTENT_URI.equals(uri)) {
             projection[1] = MediaStore.Audio.Genres.NAME;
         } else {
             projection[1] = MediaStore.MediaColumns.DATA;

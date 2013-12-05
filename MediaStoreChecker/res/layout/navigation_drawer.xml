@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/drawer_width"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#333"
+    >
+    
+    <TextView
+        android:id="@+id/nav_button_status"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_status"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_image"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_image_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_image_thumbnail"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_audio"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_audio"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_audio_album"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_audio_album"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_audio_artist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_audio_artist"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_audio_genre"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_audio_genre"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_audio_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_audio_playlist"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_video"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_video_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_video_thumbnail"
+        />
+    
+    <TextView
+        android:id="@+id/nav_button_file"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_content_height_basic"
+        android:text="@string/label_file"
+        />
+</LinearLayout>

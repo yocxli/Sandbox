@@ -1,6 +1,9 @@
 package net.yocxli.mediastorechecker;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -8,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.widget.TextView;
 
 public class MediaStoreStatusActivity extends ActionBarActivity {
     private static final String TAG = "MediaStoreStatusActivity";
@@ -16,14 +20,19 @@ public class MediaStoreStatusActivity extends ActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawer;
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_store_status);
         
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            TextView version = (TextView) findViewById(R.id.media_store_version);
+            version.setText(MediaStore.getVersion(this));
+        }
+        
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0, 0) {
-//            
 //        };
         
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
