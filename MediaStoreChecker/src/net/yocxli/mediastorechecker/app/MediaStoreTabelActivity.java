@@ -1,8 +1,10 @@
-package net.yocxli.mediastorechecker;
+package net.yocxli.mediastorechecker.app;
 
-import net.yocxli.mediastorechecker.app.MediaStoreFragment;
-import net.yocxli.mediastorechecker.app.PathInputDialogFragment;
-import net.yocxli.mediastorechecker.app.TabsAdapter;
+import net.yocxli.mediastorechecker.R;
+import net.yocxli.mediastorechecker.R.id;
+import net.yocxli.mediastorechecker.R.layout;
+import net.yocxli.mediastorechecker.R.menu;
+import net.yocxli.mediastorechecker.R.string;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -15,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity {
+public class MediaStoreTabelActivity extends ActionBarActivity {
 
     private TabsAdapter mTabsAdapter;
     
