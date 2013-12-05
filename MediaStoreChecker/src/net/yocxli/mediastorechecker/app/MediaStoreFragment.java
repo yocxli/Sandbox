@@ -47,10 +47,11 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        TextView text = (TextView) v.findViewById(android.R.id.text2);
-        Uri data = Uri.parse(String.valueOf(text.getText()));
+        TextView text = (TextView) v.findViewById(android.R.id.text1);
+        String mediaUri = mUri.toString();
+        String mediaId = text.getText().toString();
         Intent intent = new Intent(getActivity(), MediaStoreDetailActivity.class);
-        intent.setData(data);
+        intent.setData(Uri.parse(mediaUri + "/" + mediaId));
         startActivity(intent);
     }
 

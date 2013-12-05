@@ -19,69 +19,89 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MediaStoreDetailActivity extends ActionBarActivity {
+    private static final String TAG = "MediaStoreDetailActivity";
+    private static final boolean LOCAL_LOGV = true;
+    
+    public static final String EXTRA_ID = "id";
     
     private TabsAdapter mTabsAdapter;
     
     private Uri mData;
+    private String mFilePath;
     
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        final ViewPager pager = (ViewPager) findViewById(R.id.pager);
 
         mData = getIntent().getData();
         Bundle extra = getIntent().getExtras();
         if (Intent.ACTION_SEND.equals(getIntent().getAction()) && extra != null) {
+            // ‹¤—L
             mData = (Uri) extra.getParcelable(Intent.EXTRA_STREAM);
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "[onCreate] sent uri=" + mData.toString());
+            }
         }
+        mFilePath = MediaStoreHelper.getFilePathForUri(getContentResolver(), mData);
         
+        buildTabs();
+    }
+    
+    @SuppressLint("NewApi")
+    private void buildTabs() {
+        final ViewPager pager = (ViewPager) findViewById(R.id.pager);
         mTabsAdapter = new TabsAdapter(this, pager);
-        
-        Bundle infoArgs = new Bundle();
-        infoArgs.putParcelable(FileInfoFragment.DATA, mData);
-        mTabsAdapter.addTab(getString(R.string.label_info), FileInfoFragment.class, infoArgs);
-        
-        Bundle imageArgs = new Bundle();
-        imageArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        imageArgs.putParcelable(MediaStoreDetailFragment.DATA, mData);
-        mTabsAdapter.addTab(getString(R.string.label_image), MediaStoreDetailFragment.class, imageArgs);
-        
-        Bundle audioArgs = new Bundle();
-        audioArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-        audioArgs.putParcelable(MediaStoreDetailFragment.DATA, mData);
-        mTabsAdapter.addTab(getString(R.string.label_audio), MediaStoreDetailFragment.class, audioArgs);
-        
-        Bundle videoArgs = new Bundle();
-        videoArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        videoArgs.putParcelable(MediaStoreDetailFragment.DATA, mData);
-        mTabsAdapter.addTab(getString(R.string.label_video), MediaStoreDetailFragment.class, videoArgs);
-        
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+        final String uriStr = mData.toString();
+        if (uriStr.startsWith(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString())) {
+            Bundle imageArgs = new Bundle();
+            imageArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            mTabsAdapter.addTab(getString(R.string.label_image), MediaStoreDetailFragment.class, imageArgs);
+        } else if (uriStr.startsWith(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI.toString())) {
+            Bundle imageThumbArgs = new Bundle();
+            imageThumbArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI);
+            mTabsAdapter.addTab(getString(R.string.label_image_thumbnail), MediaStoreDetailFragment.class, imageThumbArgs);
+        } else if (uriStr.startsWith(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString())) {
+            Bundle audioArgs = new Bundle();
+            audioArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+            mTabsAdapter.addTab(getString(R.string.label_audio), MediaStoreDetailFragment.class, audioArgs);
+        } else if (uriStr.startsWith(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.toString())) {
+            Bundle audioAlbumArgs = new Bundle();
+            audioAlbumArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI);
+            mTabsAdapter.addTab(getString(R.string.label_audio_album), MediaStoreDetailFragment.class, audioAlbumArgs);
+        } else if (uriStr.startsWith(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (uriStr.startsWith(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (uriStr.startsWith(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (uriStr.startsWith(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString())) {
+            Bundle videoArgs = new Bundle();
+            videoArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+            mTabsAdapter.addTab(getString(R.string.label_video), MediaStoreDetailFragment.class, videoArgs);
+        } else if (uriStr.startsWith(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB && 
+                   uriStr.startsWith(MediaStore.Files.getContentUri("external").toString())) {
             Bundle fileArgs = new Bundle();
             fileArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Files.getContentUri("external"));
-            fileArgs.putParcelable(MediaStoreDetailFragment.DATA, mData);
             mTabsAdapter.addTab(getString(R.string.label_file), MediaStoreDetailFragment.class, fileArgs);
         }
     }
     
     private void update() {
-        int num = mTabsAdapter.getCount();
-        for (int i = 0; i < num; i++) {
-            Fragment fragment = mTabsAdapter.getItemInstance(i);
-            if (fragment instanceof MediaStoreDetailFragment) {
-                ((MediaStoreDetailFragment) fragment).update();
-            } else if (fragment instanceof FileInfoFragment) {
-                ((FileInfoFragment) fragment).update();
-            }
-        }
+//        int num = mTabsAdapter.getCount();
+//        for (int i = 0; i < num; i++) {
+//            Fragment fragment = mTabsAdapter.getItemInstance(i);
+//            if (fragment instanceof MediaStoreDetailFragment) {
+//                ((MediaStoreDetailFragment) fragment).update();
+//            } else if (fragment instanceof FileInfoFragment) {
+//                ((FileInfoFragment) fragment).update();
+//            }
+//        }
     }
     
     @Override

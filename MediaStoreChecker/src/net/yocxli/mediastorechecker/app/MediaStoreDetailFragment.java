@@ -4,32 +4,102 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.yocxli.mediastorechecker.R;
-import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
-import android.text.TextUtils;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
 
-public class MediaStoreDetailFragment extends ListFragment {
+public class MediaStoreDetailFragment extends ListFragment implements LoaderManager.LoaderCallbacks<ArrayList<HashMap<String, String>>> {
     
     private static final String TAG = "MediaStoreDetailImageFragment";
     private static final boolean LOCAL_LOGV = true;
     
     public static final String TARGET_URI = "target.uri";
-    public static final String DATA       = "data";
+    
+    private static class RecordLoader extends AsyncTaskLoader<ArrayList<HashMap<String, String>>> {
+        private static final String TAG = "MediaStoreDetailImageFragment.RecordLoader";
+        private static final boolean LOCAL_LOGV = true;
+        
+        final private Uri mUri;
+        private ArrayList<HashMap<String, String>> mData;
+
+        public RecordLoader(Context context, Uri uri) {
+            super(context);
+            mUri = uri;
+        }
+
+        @Override
+        public void deliverResult(ArrayList<HashMap<String, String>> data) {
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "deliverResult");
+            }
+            
+            if (isReset()) {
+                return;
+            }
+            
+            mData = data;
+            super.deliverResult(data);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "onStartLoading");
+            }
+            
+            if (mData != null) {
+                // すでに使用可能なデータがある場合はそれを使用する。
+                deliverResult(mData);
+            }
+            
+            if (takeContentChanged() || mData == null) {
+                forceLoad();
+            }
+        }
+
+        @Override
+        public ArrayList<HashMap<String, String>> loadInBackground() {
+            if (LOCAL_LOGV) {
+                Log.v(TAG, "loadInBackground: uri=" + mUri);
+            }
+            
+            ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String, String>>();
+            if (mUri != null && "content".equals(mUri.getScheme())) {
+                ContentResolver cr = getContext().getContentResolver();
+                Cursor c = cr.query(mUri, null, null, null, null);
+                if (c != null) {
+                    if (c.getCount() > 0) {
+                        c.moveToFirst();
+                        int num = c.getColumnCount();
+                        for (int i = 0; i < num; i++) {
+                            HashMap<String, String> map = new HashMap<String, String>();
+                            map.put("key", c.getColumnName(i));
+                            map.put("value", c.getString(i));
+                            list.add(map);
+                        }
+                    }
+                    c.close();
+                }
+            }
+            return list;
+        }
+        
+    }
     
     private Uri mUri;
-    private Uri mData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +109,7 @@ public class MediaStoreDetailFragment extends ListFragment {
         }
         
         Bundle args = getArguments();
-        mUri  = (Uri) args.getParcelable(TARGET_URI);
-        mData = (Uri) args.getParcelable(DATA);
+        mUri = (Uri) args.getParcelable(TARGET_URI);
     }
 
     @Override
@@ -50,55 +119,9 @@ public class MediaStoreDetailFragment extends ListFragment {
             Log.v(TAG, "onActivityCreated: savedInstanceState=" + savedInstanceState);
         }
         
-        update();
-        
         setEmptyText(getActivity().getString(R.string.message_no_data));
-    }
-    
-    public void update() {
-        final Activity activity = getActivity();
-        ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String, String>>();
-        if (mUri != null && mData != null) {
-            ContentResolver cr = getActivity().getContentResolver();
-            String path = mData.getPath();
-            if ("content".equals(mData.getScheme())) {
-                path = MediaStoreHelper.getFilePathForUri(cr, mData);
-            }
-            Cursor c = cr.query(mUri, null, MediaStore.MediaColumns.DATA + " = ?",
-                    new String[] { path }, null);
-            if (c != null && c.getCount() > 0) {
-                c.moveToFirst();
-                int num = c.getColumnCount();
-                boolean first = true;
-                do {
-                    StringBuffer buf = new StringBuffer();
-                for (int i = 0; i < num; i++) {
-                    if (!first) {
-                        String v = c.getString(i);
-                        if (!TextUtils.isEmpty(v)) {
-                            buf.append(", " + c.getColumnName(i) + "=" + v);
-                        }
-                        continue;
-                    }
-                    String v = c.getString(i);
-                    if (!TextUtils.isEmpty(v)) {
-                        buf.append(", " + c.getColumnName(i) + "=" + v);
-                    }
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("key", c.getColumnName(i));
-                    map.put("value", c.getString(i));
-                    list.add(map);
-                }
-                first = false;
-                Log.d(TAG, buf.toString());
-                } while (c.moveToNext());
-                c.close();
-            }
-        }
         
-        SimpleAdapter adapter = new SimpleAdapter(activity, list, android.R.layout.simple_list_item_2,
-                new String[] { "key", "value" }, new int[] { android.R.id.text1, android.R.id.text2});
-        setListAdapter(adapter);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -125,6 +148,30 @@ public class MediaStoreDetailFragment extends ListFragment {
         Log.v(TAG, "onDetach");
         super.onDetach();
     }
-    
+
+    @Override
+    public Loader<ArrayList<HashMap<String, String>>> onCreateLoader(int id, Bundle args) {
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "onCreateLoader");
+        }
+        return new RecordLoader(getActivity(), mUri);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<HashMap<String, String>>> loader, ArrayList<HashMap<String, String>> data) {
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "onLoadFinished");
+        }
+        SimpleAdapter adapter = new SimpleAdapter(getActivity(), data, android.R.layout.simple_list_item_2,
+                new String[] { "key", "value" }, new int[] { android.R.id.text1, android.R.id.text2});
+        setListAdapter(adapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<HashMap<String, String>>> loader) {
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "onLoaderReset");
+        }
+    }
     
 }
