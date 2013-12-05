@@ -12,8 +12,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,6 +25,8 @@ public class MediaStoreTableActivity extends ActionBarActivity {
 
     private TabsAdapter mTabsAdapter;
     private int mType;
+    
+    private DrawerLayout mDrawer;
     
     @SuppressLint("NewApi")
     @Override
@@ -153,6 +158,21 @@ public class MediaStoreTableActivity extends ActionBarActivity {
         final ActionBar actionBar = getSupportActionBar();
         String title = String.format(getString(R.string.title_tables_format), typeText);
         actionBar.setTitle(title);
+        
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+    
+    @Override
+    public boolean onSupportNavigateUp() {
+        // 引数のGravityはレイアウトXMLで指定しているものを指す。
+        if (mDrawer.isDrawerOpen(Gravity.LEFT)) {
+            mDrawer.closeDrawer(Gravity.LEFT);
+        } else {
+            mDrawer.openDrawer(Gravity.LEFT);
+        }
+        return true;
     }
 
     @Override
