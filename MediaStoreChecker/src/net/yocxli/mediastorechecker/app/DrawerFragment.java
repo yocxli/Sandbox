@@ -11,6 +11,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 public class DrawerFragment extends Fragment implements OnClickListener {
+    private OnNavigationClickListener mListener;
+    
+    public interface OnNavigationClickListener {
+        public void onNavigationClick();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,13 @@ public class DrawerFragment extends Fragment implements OnClickListener {
         Intent intent = new Intent(getActivity(), MediaStoreTableActivity.class);
         intent.putExtra(Const.MEDIA_TYPE, type);
         startActivity(intent);
+        
+        if (mListener != null) {
+            mListener.onNavigationClick();
+        }
     }
     
+    public void setOnNavigationClickListener(OnNavigationClickListener listener) {
+        mListener = listener;
+    }
 }

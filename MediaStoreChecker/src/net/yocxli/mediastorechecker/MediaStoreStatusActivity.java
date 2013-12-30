@@ -1,5 +1,6 @@
 package net.yocxli.mediastorechecker;
 
+import net.yocxli.mediastorechecker.app.DrawerFragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,6 +35,14 @@ public class MediaStoreStatusActivity extends ActionBarActivity {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0, 0) {
 //        };
+        ((DrawerFragment) getSupportFragmentManager().findFragmentById(R.id.drawer)).setOnNavigationClickListener(new DrawerFragment.OnNavigationClickListener() {
+
+            @Override
+            public void onNavigationClick() {
+                toggleDrawer();
+            }
+            
+        });
         
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -51,14 +60,16 @@ public class MediaStoreStatusActivity extends ActionBarActivity {
         if (LOCAL_LOGV) {
             Log.v(TAG, "onSupportNavigateUp");
         }
+        toggleDrawer();
+        return true;
+    }
+
+    private void toggleDrawer() {
         // 引数のGravityはレイアウトXMLで指定しているものを指す。
         if (mDrawer.isDrawerOpen(Gravity.LEFT)) {
             mDrawer.closeDrawer(Gravity.LEFT);
         } else {
             mDrawer.openDrawer(Gravity.LEFT);
         }
-        return true;
     }
-
-    
 }
