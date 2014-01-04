@@ -28,46 +28,15 @@ public class MediaStoreDetailFragment extends ListFragment implements LoaderMana
     
     public static final String TARGET_URI = "target.uri";
     
-    private static class RecordLoader extends AsyncTaskLoader<ArrayList<HashMap<String, String>>> {
+    private static class RecordLoader extends AbstractAsyncTaskLoader<ArrayList<HashMap<String, String>>> {
         private static final String TAG = "MediaStoreDetailImageFragment.RecordLoader";
         private static final boolean LOCAL_LOGV = true;
         
         final private Uri mUri;
-        private ArrayList<HashMap<String, String>> mData;
 
         public RecordLoader(Context context, Uri uri) {
             super(context);
             mUri = uri;
-        }
-
-        @Override
-        public void deliverResult(ArrayList<HashMap<String, String>> data) {
-            if (LOCAL_LOGV) {
-                Log.v(TAG, "deliverResult");
-            }
-            
-            if (isReset()) {
-                return;
-            }
-            
-            mData = data;
-            super.deliverResult(data);
-        }
-
-        @Override
-        protected void onStartLoading() {
-            if (LOCAL_LOGV) {
-                Log.v(TAG, "onStartLoading");
-            }
-            
-            if (mData != null) {
-                // すでに使用可能なデータがある場合はそれを使用する。
-                deliverResult(mData);
-            }
-            
-            if (takeContentChanged() || mData == null) {
-                forceLoad();
-            }
         }
 
         @Override
