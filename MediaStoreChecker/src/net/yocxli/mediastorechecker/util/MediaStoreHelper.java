@@ -264,6 +264,9 @@ public class MediaStoreHelper {
             if (c.getCount() > 0) {
                 c.moveToFirst();
                 final int index = c.getColumnIndex(MediaStore.MediaColumns.DATA);
+                if (index == -1) {
+                    return null;
+                }
                 path = c.getString(index);
             }
             c.close();
