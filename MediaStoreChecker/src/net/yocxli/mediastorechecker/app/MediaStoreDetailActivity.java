@@ -15,6 +15,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Audio;
+import android.provider.MediaStore.Images;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -52,6 +54,10 @@ public class MediaStoreDetailActivity extends ActionBarActivity {
         }
         mFilePath = MediaStoreHelper.getFilePathForUri(getContentResolver(), mData);
         
+        if (LOCAL_LOGV) {
+            Log.v(TAG, "[onCreate] uri=" + mData);
+        }
+        
         buildTabs();
     }
     
@@ -59,35 +65,35 @@ public class MediaStoreDetailActivity extends ActionBarActivity {
     private void buildTabs() {
         final ViewPager pager = (ViewPager) findViewById(R.id.pager);
         mTabsAdapter = new TabsAdapter(this, pager);
-        final String uriStr = mData.toString();
-        if (uriStr.startsWith(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString())) {
+        if (MediaStoreHelper.isImageUri(mData)) {
+            // ‰æ‘œ
             Bundle imageArgs = new Bundle();
-            imageArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            imageArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_image), MediaStoreDetailFragment.class, imageArgs);
-        } else if (uriStr.startsWith(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (MediaStoreHelper.isImageThumbnailUri(mData)) {
             Bundle imageThumbArgs = new Bundle();
-            imageThumbArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI);
+            imageThumbArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_image_thumbnail), MediaStoreDetailFragment.class, imageThumbArgs);
-        } else if (uriStr.startsWith(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (MediaStoreHelper.isAudioUri(mData)) {
             Bundle audioArgs = new Bundle();
-            audioArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+            audioArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_audio), MediaStoreDetailFragment.class, audioArgs);
-        } else if (uriStr.startsWith(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (MediaStoreHelper.isAudioAlbumUri(mData)) {
             Bundle audioAlbumArgs = new Bundle();
-            audioAlbumArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI);
+            audioAlbumArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_audio_album), MediaStoreDetailFragment.class, audioAlbumArgs);
-        } else if (uriStr.startsWith(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI.toString())) {
-        } else if (uriStr.startsWith(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI.toString())) {
-        } else if (uriStr.startsWith(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI.toString())) {
-        } else if (uriStr.startsWith(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (MediaStoreHelper.isAudioArtistUri(mData)) {
+        } else if (MediaStoreHelper.isAudioGenreUri(mData)) {
+        } else if (MediaStoreHelper.isAudioPlaylistUri(mData)) {
+        } else if (MediaStoreHelper.isVideoUri(mData)) {
             Bundle videoArgs = new Bundle();
-            videoArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+            videoArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_video), MediaStoreDetailFragment.class, videoArgs);
-        } else if (uriStr.startsWith(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI.toString())) {
+        } else if (MediaStoreHelper.isVideoThumbnailUri(mData)) {
         } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB && 
-                   uriStr.startsWith(MediaStore.Files.getContentUri("external").toString())) {
+                   MediaStoreHelper.isFileUri(mData)) {
             Bundle fileArgs = new Bundle();
-            fileArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, MediaStore.Files.getContentUri("external"));
+            fileArgs.putParcelable(MediaStoreDetailFragment.TARGET_URI, mData);
             mTabsAdapter.addTab(getString(R.string.label_file), MediaStoreDetailFragment.class, fileArgs);
         }
     }

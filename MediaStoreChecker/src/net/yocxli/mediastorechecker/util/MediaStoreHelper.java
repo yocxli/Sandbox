@@ -11,7 +11,10 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.provider.MediaStore.MediaColumns;
+import android.provider.MediaStore.Audio;
+import android.provider.MediaStore.Files;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Video;
 import android.util.Log;
 
 /**
@@ -283,5 +286,95 @@ public class MediaStoreHelper {
     public static File getFileForUri(ContentResolver cr, Uri uri) {
         String path = getFilePathForUri(cr, uri);
         return path == null ? null : new File(path);
+    }
+    
+    public static boolean isImageUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Images.Media.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Images.Media.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isImageThumbnailUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Images.Thumbnails.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Images.Thumbnails.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isAudioUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Audio.Media.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Audio.Media.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isAudioAlbumUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Audio.Albums.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Audio.Albums.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isAudioArtistUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Audio.Artists.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Audio.Artists.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isAudioGenreUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Audio.Genres.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Audio.Genres.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isAudioPlaylistUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Audio.Playlists.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Audio.Playlists.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isVideoUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Video.Media.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Video.Media.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isVideoThumbnailUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Video.Thumbnails.EXTERNAL_CONTENT_URI.toString())
+                || uriStr.startsWith(Video.Thumbnails.INTERNAL_CONTENT_URI.toString());
+    }
+    
+    public static boolean isFileUri(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+        String uriStr = uri.toString();
+        return uriStr.startsWith(Files.getContentUri("external").toString())
+                || uriStr.startsWith(Files.getContentUri("internal").toString());
     }
  }
