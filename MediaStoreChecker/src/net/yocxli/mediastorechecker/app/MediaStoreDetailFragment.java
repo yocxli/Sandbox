@@ -5,12 +5,15 @@ import java.util.HashMap;
 
 import net.yocxli.mediastorechecker.R;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Files;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -39,6 +42,7 @@ public class MediaStoreDetailFragment extends ListFragment implements LoaderMana
             mUri = uri;
         }
 
+        @SuppressLint("NewApi")
         @Override
         public ArrayList<HashMap<String, String>> loadInBackground() {
             if (LOCAL_LOGV) {
@@ -46,9 +50,24 @@ public class MediaStoreDetailFragment extends ListFragment implements LoaderMana
             }
             
             ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String, String>>();
-            if (mUri != null && "content".equals(mUri.getScheme())) {
-                ContentResolver cr = getContext().getContentResolver();
-                Cursor c = cr.query(mUri, null, null, null, null);
+            if (mUri != null) {
+                Cursor c = null;
+                if ("content".equals(mUri.getScheme())) {
+                    ContentResolver cr = getContext().getContentResolver();
+                    c = cr.query(mUri, null, null, null, null);
+                } else if ("file".equals(mUri.getScheme())) {
+                    ContentResolver cr = getContext().getContentResolver();
+                    String where = MediaStore.MediaColumns.DATA + " = ?";
+                    String[] args = new String[] { mUri.getPath() };
+                    c = cr.query(Files.getContentUri("external"), null, where, args, null);
+                    if (c == null) {
+                        c = cr.query(Files.getContentUri("internal"), null, where, args, null);
+                    } else if (c.getCount() <= 0) {
+                        c.close();
+                        c = null;
+                        c = cr.query(Files.getContentUri("internal"), null, where, args, null);
+                    }
+                }
                 if (c != null) {
                     if (c.getCount() > 0) {
                         c.moveToFirst();
