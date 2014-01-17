@@ -2,6 +2,7 @@ package net.yocxli.mediastorechecker.app;
 
 import net.yocxli.mediastorechecker.Const;
 import net.yocxli.mediastorechecker.R;
+import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -45,6 +46,9 @@ public class DrawerFragment extends ListFragment {
         final int count = MENU.length;
         String[] data = new String[count];
         for (int i = 0; i < count; i++) {
+            if (MENU[i] == R.string.label_file && MediaStoreHelper.hasFileTable()) {
+                continue;
+            }
             data[i] = getString(MENU[i]);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(

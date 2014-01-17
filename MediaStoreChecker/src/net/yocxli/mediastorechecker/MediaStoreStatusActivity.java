@@ -25,6 +25,7 @@ public class MediaStoreStatusActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         android.os.Debug.waitForDebugger();
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_store_status);
         

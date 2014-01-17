@@ -377,4 +377,8 @@ public class MediaStoreHelper {
         return uriStr.startsWith(Files.getContentUri("external").toString())
                 || uriStr.startsWith(Files.getContentUri("internal").toString());
     }
+    
+    public static boolean hasFileTable() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
  }
