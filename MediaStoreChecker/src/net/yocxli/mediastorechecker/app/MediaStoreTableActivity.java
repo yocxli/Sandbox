@@ -6,6 +6,7 @@ import net.yocxli.mediastorechecker.R.id;
 import net.yocxli.mediastorechecker.R.layout;
 import net.yocxli.mediastorechecker.R.menu;
 import net.yocxli.mediastorechecker.R.string;
+import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -84,7 +85,7 @@ public class MediaStoreTableActivity extends ActionBarActivity {
             
             Bundle audioAlbumInternalArgs = new Bundle();
             audioAlbumInternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Audio.Albums.INTERNAL_CONTENT_URI);
-            mTabsAdapter.addTab(getString(R.string.volume_external), MediaStoreFragment.class, audioAlbumInternalArgs);
+            mTabsAdapter.addTab(getString(R.string.volume_internal), MediaStoreFragment.class, audioAlbumInternalArgs);
         } else if (mType == Const.MEDIA_TYPE_AUDIO_ARTIST) {
             // アーティスト
             typeText = getString(R.string.label_audio_artist);
@@ -148,7 +149,7 @@ public class MediaStoreTableActivity extends ActionBarActivity {
             // ファイル
             typeText = getString(R.string.label_file);
             
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            if (MediaStoreHelper.hasFileTable()) {
                 Bundle fileExternalArgs = new Bundle();
                 fileExternalArgs.putParcelable(MediaStoreFragment.TARGET_URI, MediaStore.Files.getContentUri("external"));
                 mTabsAdapter.addTab(getString(R.string.volume_external), MediaStoreFragment.class, fileExternalArgs);
