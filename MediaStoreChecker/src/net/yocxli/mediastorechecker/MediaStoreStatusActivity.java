@@ -24,7 +24,6 @@ public class MediaStoreStatusActivity extends ActionBarActivity {
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        android.os.Debug.waitForDebugger();
         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_store_status);

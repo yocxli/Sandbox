@@ -44,9 +44,10 @@ public class DrawerFragment extends ListFragment {
         View view = inflater.inflate(R.layout.navigation_drawer, null);
         
         final int count = MENU.length;
-        String[] data = new String[count];
+        final int size = MediaStoreHelper.hasFileTable() ? count : count - 1;
+        String[] data = new String[size];
         for (int i = 0; i < count; i++) {
-            if (MENU[i] == R.string.label_file && MediaStoreHelper.hasFileTable()) {
+            if (MENU[i] == R.string.label_file && !MediaStoreHelper.hasFileTable()) {
                 continue;
             }
             data[i] = getString(MENU[i]);
