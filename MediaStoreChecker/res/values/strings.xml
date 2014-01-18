@@ -42,6 +42,8 @@
     <string name="message_failure_create_directory">フォルダーの作成に失敗しました。</string>
     <string name="title_activity_media_store_status">MediaStoreStatusActivity</string>
     
+    <string name="loading">読み込み中</string>
+    
     <string name="volume_external">external</string>
     <string name="volume_internal">internal</string>
 </resources>
