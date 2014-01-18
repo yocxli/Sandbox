@@ -28,8 +28,8 @@ public class MediaStoreFragment extends ListFragment implements LoaderManager.Lo
     
     public static final String LOADER_ARGUMENT_PAGE = "page";
     
-    public static final int AUTOLOAD_THRESHHOLD = 5;
-    public static final int PAGE_SIZE           = 100;
+    private static final int AUTOLOAD_THRESHHOLD = 5;
+    private static final int PAGE_SIZE           = 100;
     
     private SimpleCursorAdapter mAdapter;
     private Uri mUri;
