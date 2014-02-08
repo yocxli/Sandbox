@@ -1,12 +1,12 @@
 package net.yocxli.mediastorechecker.app;
 
+import net.yocxli.common.provider.MediaStoreHelper;
 import net.yocxli.mediastorechecker.Const;
 import net.yocxli.mediastorechecker.R;
 import net.yocxli.mediastorechecker.R.id;
 import net.yocxli.mediastorechecker.R.layout;
 import net.yocxli.mediastorechecker.R.menu;
 import net.yocxli.mediastorechecker.R.string;
-import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 
 import android.annotation.SuppressLint;
 import android.os.Build;

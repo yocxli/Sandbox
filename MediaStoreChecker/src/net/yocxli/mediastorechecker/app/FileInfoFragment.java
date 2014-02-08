@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.yocxli.common.provider.MediaStoreHelper;
 import net.yocxli.mediastorechecker.R;
-import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 
 import android.app.Activity;
 import android.content.ContentResolver;

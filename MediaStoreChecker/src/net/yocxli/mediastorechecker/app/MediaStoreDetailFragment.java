@@ -3,6 +3,7 @@ package net.yocxli.mediastorechecker.app;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.yocxli.common.content.AbsAsyncTaskLoader;
 import net.yocxli.mediastorechecker.R;
 
 import android.annotation.SuppressLint;
@@ -31,7 +32,7 @@ public class MediaStoreDetailFragment extends ListFragment implements LoaderMana
     
     public static final String TARGET_URI = "target.uri";
     
-    private static class RecordLoader extends AbstractAsyncTaskLoader<ArrayList<HashMap<String, String>>> {
+    private static class RecordLoader extends AbsAsyncTaskLoader<ArrayList<HashMap<String, String>>> {
         private static final String TAG = "MediaStoreDetailImageFragment.RecordLoader";
         private static final boolean LOCAL_LOGV = true;
         

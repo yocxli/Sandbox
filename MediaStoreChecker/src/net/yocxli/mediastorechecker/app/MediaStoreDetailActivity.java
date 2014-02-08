@@ -3,9 +3,9 @@ package net.yocxli.mediastorechecker.app;
 import java.io.File;
 import java.io.IOException;
 
+import net.yocxli.common.provider.MediaStoreHelper;
 import net.yocxli.mediastorechecker.MediaScanReceiver;
 import net.yocxli.mediastorechecker.R;
-import net.yocxli.mediastorechecker.util.MediaStoreHelper;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.content.Intent;
